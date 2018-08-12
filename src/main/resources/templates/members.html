@@ -116,8 +116,8 @@
                                                     <div th:if="${user.isAdmin()}">
                                                         <form action="/deleteUser" method="GET">
                                                             <input hidden="hidden" type="text" th:value="${azraUser.getUsername()}" name="username"/>
-                                                            <button th:id="${azraUser.getUsername().concat(2)}" hidden="hidden" type="submit"></button>
-                                                            <button type="button" th:data-username="${azraUser.getUsername().concat(2)}" onclick="deleteUser(event)"
+                                                            <button th:id="${azraUser.getUsername().concat('_')}" hidden="hidden" type="submit"></button>
+                                                            <button type="button" th:data-username="${azraUser.getUsername().concat('_')}" onclick="deleteUser(event)"
                                                                     class="btn btn-outline-danger btn-block">Delete</button>
                                                         </form>
                                                     </div>
@@ -142,14 +142,15 @@
                     <div class="modal-body">
                         <h5 class="text-danger text-center" id="addMemberMsg" style="display: none">All fields are required</h5>
                         <form id="addForm" method="GET" action="/addNewMember">
-                            <input type="text" placeholder="Name" name="name" class="form-control mt-2" id="addNameField" />
-                            <input type="text" name="phoneNumber" placeholder="Phone Number" class="form-control mt-2" id="addPhoneField" />
+                            <input type="text" placeholder="Name" minlength="4" name="name" class="form-control mt-2" id="addNameField" />
+                            <input type="number" name="phoneNumber" pattern=".{9,}"  placeholder="Phone Number (Atleast 9 characters)" class="form-control mt-2" id="addPhoneField" />
                             <select class="custom-select mt-2" id="addGenderField" name="gender">
                                 <option>-- Gender --</option>
                                 <option>Male</option>
                                 <option>Female</option>
                                 <option>Other</option>
                             </select>
+                            <button style="display: none" type="submit" id="submitAddUserForm"></button>
                         </form>
                     </div>
                     <div class="modal-footer">

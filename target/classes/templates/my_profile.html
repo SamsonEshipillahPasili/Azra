@@ -80,7 +80,7 @@
                             <h5 style="display:none" id="updateUsernameMsg" class="text-danger text-center">All fields are required.</h5>
                             <form action="/updateUsername" method="GET">
                                 <input id="oldUsernameUp" type="text" class="form-control mt-2" name="oldUsername" placeholder="Old Username" />
-                                <input id="newUsernameUp" type="text" class="form-control mt-2" name="newUsername" placeholder="New Username" />
+                                <input id="newUsernameUp" pattern=".{6,}" type="text" class="form-control mt-2" name="newUsername" placeholder="New Username (At least 6 characters)" />
                                 <button type="submit" id="updateUsernameBtn" style="display: none"></button>
                             </form>
                         </div>
@@ -98,7 +98,7 @@
                             <h5 id="passwordUpdateMsg" style="display: none" class="text-center text-danger">All fields are required!</h5>
                             <form method="GET" action="/updatePassword" id="passwordForm">
                                 <input type="password" name="oldPassword" id="oldPasswordUp" class="form-control mt-2" placeholder="Old Password" />
-                                <input type="password" name="newPassword" id="newPasswordUp" class="form-control mt-2" placeholder="New Password" />
+                                <input type="password"  pattern=".{6,}" name="newPassword" id="newPasswordUp" class="form-control mt-2" placeholder="New Password (Atleast 6 characters)" />
                                 <input type="password"  id="confirmPasswordUp" class="form-control mt-2" placeholder="Confirm New Password" />
                                 <button type="submit" id="updatePasswordBtn" hidden="hidden"></button>
                             </form>
@@ -115,10 +115,11 @@
                         <div class="card-body">
                             <h5 id="phoneNumberMsg" style="display: none" class="text-center text-danger">All fields are required!</h5>
                             <form method="GET" action="/updatePhoneNumber" id="phoneNumberForm">
-                                <input type="text" th:value="${user.getName()}" name="name"
+                                <input type="text" th:value="${user.getName()}" name="name" minlength="4"
                                        id="nameUp" class="form-control mt-2" placeholder="Name" />
-                                <input type="text" th:value="${user.getPhoneNumber()}" name="phoneNumber"
+                                <input type="number" th:value="${user.getPhoneNumber()}" min="10" name="phoneNumber"
                                        id="phoneNumberUp" class="form-control mt-2" placeholder="Phone Number" />
+                                <button type="submit" id="updateOtherBtn" style="display: none"></button>
                             </form>
                         </div>
                         <div class="card-footer">

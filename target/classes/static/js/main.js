@@ -88,12 +88,16 @@ function addUser(event){
     if(name && phoneNumber && gender){
         if(gender === "-- Gender --"){
             $("#addMemberMsg").text("Select the gender, please").fadeIn();
+        }else if(phoneNumber.length < 9){
+            $("#addMemberMsg").text("Phone number must be at least 9 characters!").fadeIn();
         }else{
+
             // submit the values to  REST endpoint to add the values
             var serverURL = "/Azra/addMember/" + name + "/" + phoneNumber + "/" + gender + "/";
-            var form = $("#addForm");
-            form.submit();
-            $(event.target).html(btnHtml2);
+            //var form = $("#addForm");
+            //form.submit();
+            $("#submitAddUserForm").click();
+            //$(event.target).html(btnHtml2);
         }
     }else{
         $("#addMemberMsg").fadeIn();
@@ -103,6 +107,7 @@ function addUser(event){
 // delete a user
 function deleteUser(event){
      var id = $(event.target).attr("data-username");
+
     swal({
       title: "Are you sure?",
       text: "The user with the id: " + id + " will be deleted permanently",
@@ -187,7 +192,8 @@ function updatePassword(){
             $("#passwordUpdateMsg").fadeIn();
         }else{
             // continue with password update
-            $("#passwordForm").submit();
+            //$("#passwordForm").submit();
+            $("#updatePasswordBtn").click();
         }
     }else{
         $("#passwordUpdateMsg").fadeIn();
@@ -199,7 +205,8 @@ function updatePhoneNumber(){
     var phoneNumber = $("#phoneNumberUp").val();
     var name = $("#nameUp").val();
     if(phoneNumber && name){
-        $("#phoneNumberForm").submit();
+        //$("#phoneNumberForm").submit();
+        $("#updateOtherBtn").click();
     }else{
         $("#phoneNumberMsg").fadeIn();
     }
