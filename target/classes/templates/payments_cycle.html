@@ -84,8 +84,12 @@
                 <div style="display: none" class="customCard card mx-auto" id="contributionsDetailCard">
                     <div class="card-header text-center">
                         <span>Current Payment Cycle </span>
+                        <!-- <button th:if="${currentCycle == null && user.isAdmin()}" type="button" id="openPaymentBtn" class="btn btn-outline-primary float-right"
+                                onclick="openPaymentCycle()">Open Cycle</button>-->
+
                         <button th:if="${currentCycle == null && user.isAdmin()}" type="button" id="openPaymentBtn" class="btn btn-outline-primary float-right"
-                                onclick="openPaymentCycle()">Open Cycle</button>
+                                data-toggle="modal" data-target="#openPaymentCycleModal">Open Cycle</button>
+
 
                         <button th:if="${currentCycle != null}" type="button" id="closePaymentBtn" class="btn btn-outline-danger float-right"
                                 onclick="closePaymentCycle()">Close Cycle</button>
@@ -118,6 +122,34 @@
             <div class="d-flex">
                 <div class="mx-auto" style="margin-top: 250px">
                     <img src="img/page_loading.gif" th:src="@{/img/page_loading.gif}" alt="Page Loader"/>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal to open payment cycle -->
+        <div class="modal fade" id="openPaymentCycleModal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="modal-title">Open Payment Cycle</h3>
+                    </div>
+                    <div class="modal-body">
+                        <h5 class="text-danger text-center">Invalid Amount!</h5>
+                        <input type="number" class="form-control mt-2" id="amountID"  placeholder="Enter the amount"/>
+                        <select class="form-control mt-2" id="numOfDays">
+                            <option>1 Day</option>
+                            <option>2 Days</option>
+                            <option>3 Days</option>
+                            <option>4 Days</option>
+                            <option>5 Days</option>
+                            <option>6 Days</option>
+                            <option>7 Days</option>
+                        </select>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" data-dismiss="modal" class="btn btn-outline-danger">Cancel</button>
+                        <button type="button" data-dismiss="modal" class="btn btn-outline-success">Open Cycle</button>
+                    </div>
                 </div>
             </div>
         </div>
