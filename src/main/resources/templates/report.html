@@ -1,0 +1,92 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>Azra | Report</title>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+        <link href="css/bootstrap_no_print.css" rel="stylesheet" th:href="@{/css/bootstrap_no_print.css}" />
+    </head>
+    <body>
+
+        <h1 style="font-weight: bold" class="text-center">Azra</h1>
+        <br />
+        <br />
+
+        <h5 class="text-center">Members</h5>
+
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th class="text-info text-center">Sr. No.</th>
+                        <th class="text-info text-center">Name</th>
+                        <th class="text-info text-center">Phone Number</th>
+                        <th class="text-info text-center">Gender</th>
+                        <th class="text-info text-center">Date Joined</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <th:block th:each="member, count : ${members}">
+                        <tr>
+                            <td class="text-center" th:text="${count.getCount()}">1</td>
+                            <td class="text-center" th:text="${member.getName()}">Makelia</td>
+                            <td class="text-center" th:text="${member.getPhoneNumber()}">072986412</td>
+                            <td class="text-center" th:text="${member.getGender()}">Male</td>
+                            <td class="text-center" th:text="${member.getDateJoined()}">12/03/15</td>
+                        </tr>
+                    </th:block>
+                </tbody>
+            </table>
+
+
+    <br />
+    <h5 class="text-center">Today's Contributions</h5>
+
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th class="text-info text-center">Sr. No.</th>
+                    <th class="text-info text-center">Name</th>
+                    <th class="text-info text-center">Amount</th>
+                    <th class="text-info text-center">Time of Contribution</th>
+                </tr>
+            </thead>
+            <tbody>
+                <th:block th:each="contribution, count : ${contributions}">
+                    <tr>
+                        <td class="text-center" th:text="${count.getCount()}">1</td>
+                        <td class="text-center" th:text="${contribution.getName()}">Makelia</td>
+                        <td class="text-center">Ksh <span th:text="${currentCycle.getAmountPerPerson()}">2000</span></td>
+                        <td class="text-center" th:text="${contribution.getTime()}">14:03:10</td>
+                    </tr>
+                </th:block>
+            </tbody>
+        </table>
+
+
+    <br />
+    <h5 class="text-center">Current Payment Cycle</h5>
+
+        <table th:if="${currentCycle != null}" class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th class="text-info text-center">Sr. No.</th>
+                    <th class="text-info text-center">Name</th>
+                    <th class="text-info text-center">Get phone number</th>
+                    <th class="text-info text-center">Date of Payment</th>
+                </tr>
+            </thead>
+            <tbody>
+                <th:block th:each="member, count : ${currentCycle.getPaymentList()}">
+                    <tr>
+                        <td class="text-center" th:text="${count.getCount()}">1</td>
+                        <td class="text-center" th:text="${member.getName()}">Makelia</td>
+                        <td class="text-center" th:text="${member.getPhoneNumber()}">07*******</td>
+                        <td class="text-center" th:class="${member.getAssocStyle()}" th:text="${member.getParsedDate()}">
+                            12/03/14
+                        </td>
+                    </tr>
+                </th:block>
+            </tbody>
+        </table>
+    </body>
+</html>

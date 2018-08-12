@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>Azra | Home</title>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+        <!-- Links -->
+        <link th:href="@{/css/bootstrap.css}" href="css/bootstrap.css" rel="stylesheet" />
+        <link th:href="@{/css/sweetalert.css}" href="/css/sweetalert.css" rel="stylesheet" />
+        <link th:href="@{/css/font-awesome.min.css}" href="/css/font-awesome.min.css" rel="stylesheet" />
+        <link th:href="@{/css/main.css}" href="/css/main.css" rel="stylesheet" />
+
+        <!-- Scripts --> 
+        <script src="js/jquery.js" th:src="@{/js/jquery.js}"></script>
+        <script src="js/bootstrap.min.js" th:src="@{/js/bootstrap.min.js}"></script>
+        <script src="js/sweetalert.js" th:src="@{/js/sweetalert.js}"></script>
+        <script src="js/main.js" th:src="@{/js/main.js}"></script>
+
+    </head>
+    <body>
+        <div id="mainPage">
+            <div th:if="${param.error}" class="bg-danger text-center"><span style="color: white">Invalid Credentials</span></div>
+            <div th:if="${param.loggedOut}" class="bg-danger text-center"><span style="color: white">You are logged out.</span></div>
+            <div class="first-header-container parallax">
+                <h1 class="text-center main-heading">Azra</h1>
+                <h3 class="text-center">The path to financial freedom</h3>
+                <div class="d-flex justify-content-center" style="margin-top: 100px;">
+                    <button type="button" class="mx-auto btn btn-outline-light w-25"
+                            data-toggle="modal" data-target="#logIn">Log In</button>
+                    <button type="button" class="mx-auto btn btn-outline-light w-25" 
+                            data-toggle="modal" data-target="#register">Sign Up</button>
+                </div>
+            </div>
+            <div class="second-header-container">
+                <h3 class="text-center pt-3">Welcome to Azra</h3>
+                <div class="container">
+                    <p>Financial freedom is an ever moving target. While many people have 
+                        come up with ways to get the financial safety net, it has become 
+                        clear that never going broke is akin to chasing a wild goose. However,
+                        <span class="text-success">Azra</span> provides the path and therefore the promise
+                        of financial safety at all points in one's life. 
+                    </p>
+                    <hr />
+
+                </div>
+            </div>
+            <div class="second-header-container">
+                <h3 class="text-center pt-3">How it works</h3>
+                <div class="container">
+                    <p>
+                        <span class="text-success">Azra</span> is driven by the community behind it.
+                        The members pool their resources to one of the members in an agreed 
+                        cycle. A cycle is deemed complete if all the members have received 
+                        contributions from all the other members before a new cycle is initiated. 
+                    </p>
+                </div>
+            </div>
+            <div class="second-header-container">
+                <div class="container">
+
+                    <div class="d-flex flex-column">
+                        <h5 class="text-center pt-3 text-success">Already have an account?</h5>
+                        <button class="mx-auto btn btn-outline-success w-50" 
+                                data-toggle="modal" data-target="#logIn">
+                            Log In</button>
+                        <h5 class="text-center pt-3">Or</h5>
+                        <button style="margin-bottom: 20px;" class="mx-auto btn btn-dark w-50"
+                                data-toggle="modal" data-target="#register">Sign Up</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Register modal --> 
+            <div class="modal fade" id="register">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3 class="modal-title mx-auto">Register to Azra</h3>
+                        </div>
+                        <div class="container">
+                            Hi! Contact the Azra administrator
+                            at <span class="text-success">admin@azra.com</span>
+                            for addition into the system. 
+                            <br />
+                            Additionally, you can call the administrator at
+                            <span class="text-success">0700000089</span> from
+                            09:00 Hours to 16:00Hrs East African Time.
+                        </div>
+                        <div class="modal-footer">
+                            <button data-dismiss="modal" class="btn btn-primary">Ok</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Log in modal -->
+            <div class="modal fade" id="logIn">
+                <div class="modal-dialog">
+
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3 class="modal-title mx-auto">Log in to Azra</h3>
+                        </div>
+
+                        <div class="modal-body">
+                            <div class="text-danger text-center">
+                                <span id="logInErrorMsg" style="display: none"> All fields are required!</span>
+                            </div>
+                            <input class="form-control mt-2" type="text" placeholder="Username" id="username"/>
+                            <input class="form-control mt-2"  type="password" placeholder="Password" id="password"/>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button class="btn btn-outline-danger" data-dismiss="modal">Cancel</button>
+                            <button class="btn btn-primary" onclick="validateLogIn(event)">Log In</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+
+        <!-- The real log in form -->
+        <form style="display: none" th:action="@{/}" method="POST">
+            <input type="text" name="username" id="rUsernameField" />
+            <input type="text" name="password" id="rPasswordField"/>
+            <button type="submit" id="rSubmitButton"></button>
+        </form>
+
+        <div id="pageLoader">
+            <div class="d-flex">
+                <div class="mx-auto" style="margin-top: 250px">
+                    <img src="/img/page_loading.gif" alt="Page Loader"/>
+                </div>
+            </div>
+        </div>
+    </body>
+
+    <script>
+        setTimeout(function () {
+            $("#pageLoader").fadeOut(function () {
+                $("#mainPage").fadeIn();
+            });
+        }, 300);
+
+    </script> 
+</html>

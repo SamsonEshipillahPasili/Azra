@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>Azra | Dashboard</title>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+        <!-- Links -->
+        <link th:href="@{/css/bootstrap.css}" href="css/bootstrap.css" rel="stylesheet" />
+        <link th:href="@{/css/sweetalert.css}" href="css/sweetalert.css" rel="stylesheet" />
+        <link th:href="@{/css/font-awesome.min.css}" href="css/font-awesome.min.css" rel="stylesheet" />
+        <link th:href="@{/css/main.css}" href="css/main.css" rel="stylesheet" />
+
+        <!-- Scripts --> 
+        <script src="js/jquery.js" th:src="@{/js/jquery.js}"></script>
+        <script src="js/bootstrap.min.js" th:src="@{/js/bootstrap.min.js}"></script>
+        <script src="js/sweetalert.js" th:src="@{/js/sweetalert.js}"></script>
+        <script src="js/main.js" th:src="@{/js/main.js}"></script>
+
+    </head>
+    <body>
+        <!-- Main Dashboard page --> 
+        <div id="dashboardPage">
+            <!-- The navigation bar -->
+            <div class="sidenav">
+                <a href="dashboard.html" th:href="@{/Azra/dashboard}">Home</a>
+                <a href="payments_cycle.html" th:href="@{/Azra/paymentsCycle}" style="color: white">Payments</a>
+                <a href="#" onclick="showContributeDialog('Sample')">Contribute</a>
+                <a href="members.html" th:href="@{/Azra/members}">Members</a>
+                <a href="my_profile.html" th:href="@{/Azra/myProfile}">My Profile</a>
+                <a href="#" th:href="@{/Azra/pdf/report}">Report</a>
+                <a href="index.html" th:href="@{/logOut}">Log Out</a>
+            </div>
+
+            <!-- Dashboard main content --> 
+            <div id="dashboardContent">
+
+
+                <!-- The welcome card-->
+                <div style="display: none" class="customCard card mx-auto" id="welcomeCard">
+                    <div class="card-body">
+                        <div class="float-left">
+                            <h4>Logged in as <span th:text="${user.getName()}" class="text-success">Kevin</span></h4>
+                            <table>
+                                <tr>
+                                    <td><h5>Role</h5></td>
+                                    <td><h5><span class="text-info" th:text="${user.getRole()}">Administrator</span></h5></td>
+                                </tr>
+                            </table>
+                            <div th:if="${currentCycle != null}">
+                                <span>Date of Payment</span>
+                                <span class="text-danger" th:text="${contExtras.getDateOfPayment()}">12/03/2015</span>
+                            </div>
+                        </div>
+                        <div class="float-right">
+                            <img style="margin-left: 30px" class="profile-pic rounded-circle"
+                                 src="/img/avatar.png" alt="profile-pic" th:src="${user.imagePath()}" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- turnout card -->
+                <div style="margin-left: 2.6%; display: none" class="customCard" id="turnoutCard">
+                    <table class="table table-light table-hover table-striped table-bordered" th:if="${currentCycle != null}">
+                        <tr>
+                            <th class="text-info">Today's Recipient</th>
+                            <td th:text="${contExtras.getTodaysRecipient()}">Kevin Kevin Kevin</td>
+                        </tr>
+                        <tr>
+                            <th class="text-info">Contribution Turn out</th>
+                            <td><span class="text-success" th:text="${contExtras.getContributionTurnOut()}">6</span> out of <span th:text="${contExtras.getNoOfContributors()}" class="text-danger">10</span></td>
+                        </tr>
+                        <tr>
+                            <th class="text-info">Amount Per Person</th>
+                            <td>Ksh. <span th:text="${currentCycle.getAmountPerPerson()}">300</span> </td>
+                        </tr>
+                        <tr>
+                            <th class="text-info">Total Amount</th>
+                            <td>Ksh. <span th:text="${contExtras.getTotalContributions()}" class="text-success">6500</span> out of <span class="text-danger" th:text="${contExtras.getTotalPossibleContributions()}">10000</span></td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div style="display: none" class="customCard card mx-auto" id="contributionsDetailCard">
+                    <div class="card-header text-center">
+                        <span>Current Payment Cycle </span>
+                        <button th:if="${currentCycle == null && user.isAdmin()}" type="button" id="openPaymentBtn" class="btn btn-outline-primary float-right"
+                                onclick="openPaymentCycle()">Open Cycle</button>
+
+                        <button th:if="${currentCycle != null}" type="button" id="closePaymentBtn" class="btn btn-outline-danger float-right"
+                                onclick="closePaymentCycle()">Close Cycle</button>
+                    </div>
+                </div>
+
+                <div  style="margin-left: 2.6%; display: none" class="customCard" id="contributionsTable">
+                    <table th:if="${currentCycle != null}" class="table table-light table-hover table-striped table-bordered">
+                        <tr>
+                            <th class="text-info text-center">Sr. No.</th>
+                            <th class="text-info text-center">Name</th>
+                            <th class="text-info text-center">Get phone number</th>
+                            <th class="text-info text-center">Date of Payment</th>
+                        </tr>
+                        <th:block th:each="member, count : ${currentCycle.getPaymentList()}">
+                            <tr>
+                                <td class="text-center" th:text="${count.getCount()}">1</td>
+                                <td class="text-center" th:text="${member.getName()}">Makelia</td>
+                                <td class="text-center" th:text="${member.getPhoneNumber()}">07*******</td>
+                                <td class="text-center" th:class="${member.getAssocStyle()}" th:text="${member.getParsedDate()}">12/03/14</td>
+                            </tr>
+                        </th:block>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- The page loader --> 
+        <div id="pageLoader">
+            <div class="d-flex">
+                <div class="mx-auto" style="margin-top: 250px">
+                    <img src="img/page_loading.gif" th:src="@{/img/page_loading.gif}" alt="Page Loader"/>
+                </div>
+            </div>
+        </div>
+    </body>
+
+    <script>
+        setTimeout(function () {
+            $("#pageLoader").fadeOut(function () {
+                $("#welcomeCard").fadeIn(function () {
+                    $("#turnoutCard").fadeIn(function () {
+                        $("#contributionsDetailCard").fadeIn(function () {
+                            $("#contributionsTable").fadeIn();
+                        });
+                    });
+                });
+            });
+        }, 300);
+
+    </script> 
+</html>

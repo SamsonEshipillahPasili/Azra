@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>Azra | Members</title>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+        <!-- Links -->
+        <link href="/css/bootstrap.css" rel="stylesheet" />
+        <link href="/css/sweetalert.css" rel="stylesheet" />
+        <link href="/css/font-awesome.min.css" rel="stylesheet" />
+        <link href="/css/main.css" rel="stylesheet" />
+
+        <!-- Scripts -->
+        <script src="/js/jquery.js"></script>
+        <script src="/js/bootstrap.min.js"></script>
+        <script src="/js/sweetalert.js"></script>
+        <script src="/js/main.js"></script>
+
+    </head>
+    <body>
+        <!-- Main Dashboard page --> 
+        <div id="dashboardPage">
+            <!-- The navigation bar -->
+            <div class="sidenav">
+                <a href="dashboard.html" th:href="@{/Azra/dashboard}">Home</a>
+                <a href="payments_cycle.html" th:href="@{/Azra/paymentsCycle}">Payments</a>
+                <a href="#" onclick="showContributeDialog('Sample')">Contribute</a>
+                <a href="#" style="color: white">Members</a>
+                <a href="my_profile.html" th:href="@{/Azra/myProfile}">My Profile</a>
+                <a href="#" th:href="@{/Azra/pdf/report}">Report</a>
+                <a href="index.html" th:href="@{/logOut}">Log Out</a>
+            </div>
+
+            <!-- Dashboard main content --> 
+            <div id="dashboardContent">
+
+                <!-- The welcome card --> 
+                <div style="display: none" class="customCard card mx-auto" id="welcomeCard">
+                    <div class="text-center bg-danger" th:if="${param.empty}" style="color: white">Could not add a new member: All fields are required.</div>
+                    <div class="text-center bg-danger" th:if="${param.invalidGender}" style="color: white">Could not add a new member: Invalid Gender</div>
+                    <div class="text-center bg-danger" th:if="${param.duplicate}" style="color: white">A member already exists with the supplied username.</div>
+                    <div class="text-center bg-success" th:if="${param.deleted}" style="color: white">The member has been deleted successfully.</div>
+                    <div class="text-center bg-success" th:if="${param.blocked}" style="color: white">The member has been blocked successfully.</div>
+                    <div class="text-center bg-success" th:if="${param.unblocked}" style="color: white">The member has been unblocked successfully.</div>
+                    <div class="text-center bg-success" th:if="${param.added}" style="color: white">Member Added Successfully</div>
+                    <div class="card-body">
+                        <div class="float-left">
+                            <h4>Logged in as <span th:text="${user.getName()}"class="text-success">Kevin</span></h4>
+                            <table>
+                                <tr>
+                                    <td><h5>Role</h5></td>
+                                    <td><h5><span th:text="${user.getRole()}" class="text-info">Administrator</span></h5></td>
+                                </tr>
+                            </table>
+                            <div th:if="${currentCycle != null}">
+                                <span>Date of Payment</span>
+                                <span class="text-danger" th:text="${contExtras.getDateOfPayment()}">12/03/2015</span>
+                            </div>
+                        </div>
+                        <div class="float-right">
+                            <img style="margin-left: 30px" class="profile-pic rounded-circle"
+                                 src="/img/avatar.png" alt="profile-pic" th:src="${user.imagePath()}" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- add a member to the system --> 
+                <div th:if="${user.isAdmin()}" style="margin-left: 2.6%; display: none" class="customCard" id="turnoutCard">
+                    <button data-toggle="modal" data-target="#addMember" class="btn btn-lg btn-block btn-info">Add A member</button>
+                </div>
+
+                <!-- Member list header --> 
+                <div style="display: none" class="customCard card mx-auto" id="contributionsDetailCard">
+                    <div class="card-header text-center">
+                        <span>Member List</span>
+                    </div>
+                </div>
+
+                <!-- List of members --> 
+                <div  style="margin-left: 2.6%; display: none" class="customCard" id="contributionsTable">
+                    <table class="table table-light table-hover table-striped table-bordered">
+                        <tr>
+                            <th class="text-info text-center">Sr. No.</th>
+                            <th class="text-info text-center">Name</th>
+                            <th class="text-info text-center">Phone Number</th>
+                            <th class="text-info text-center">Gender</th>
+                            <th class="text-info text-center">Date Joined</th>
+                            <th class="text-info text-center" th:if="${user.isAdmin()}">Block Account</th>
+                            <th class="text-info text-center" th:if="${user.isAdmin()}">Delete Member</th>
+                        </tr>
+                        <th:block th:each="member, count : ${members}">
+                            <tr>
+                                <td class="text-center" th:text="${count.getCount()}">1</td>
+                                <td class="text-center" th:text="${member.getName()}">Makelia</td>
+                                <td class="text-center" th:text="${member.getPhoneNumber()}">072986412</td>
+                                <td class="text-center" th:text="${member.getGender()}">Male</td>
+                                <td class="text-center" th:text="${member.getDateJoined()}">12/03/15</td>
+
+                                <td th:if="${member.isEnabled() && user.isAdmin()}" >
+                                    <form action="/blockUser" method="GET">
+                                        <input hidden="hidden" type="text" th:value="${member.getUsername()}" name="username"/>
+                                        <button th:id="${member.getUsername()}" hidden="hidden" type="submit"></button>
+                                        <button type="button" th:data-username="${member.getUsername()}" onclick="blockUser(event)"
+                                                class="btn btn-outline-danger btn-block">Block</button>
+                                    </form>
+                                </td>
+                                <td th:if="${!(member.isEnabled()) && user.isAdmin()}">
+                                    <form action="/unBlockUser" method="GET">
+                                        <input hidden="hidden" type="text" th:value="${member.getUsername()}" name="username"/>
+                                        <button th:id="${member.getUsername()}" hidden="hidden" type="submit"></button>
+                                        <button type="button" th:data-username="${member.getUsername()}" onclick="unBlockUser(event)"
+                                                class="btn btn-outline-success btn-block">Unblock</button>
+                                    </form>
+                                </td>
+                                <td th:if="${user.isAdmin()}">
+                                    <form action="/deleteUser" method="GET">
+                                        <input hidden="hidden" type="text" th:value="${member.getUsername()}" name="username"/>
+                                        <button th:id="${member.getUsername().concat(2)}" hidden="hidden" type="submit"></button>
+                                        <button type="button" th:data-username="${member.getUsername().concat(2)}" onclick="deleteUser(event)"
+                                                class="btn btn-outline-danger btn-block">Delete</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        </th:block>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Modal to add a member --> 
+        <div class="modal fade" id="addMember">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Add a member</h4>
+                    </div>
+                    <div class="modal-body">
+                        <h5 class="text-danger text-center" id="addMemberMsg" style="display: none">All fields are required</h5>
+                        <form id="addForm" method="GET" action="/addNewMember">
+                            <input type="text" placeholder="Name" name="name" class="form-control mt-2" id="addNameField" />
+                            <input type="text" name="phoneNumber" placeholder="Phone Number" class="form-control mt-2" id="addPhoneField" />
+                            <select class="custom-select mt-2" id="addGenderField" name="gender">
+                                <option>-- Gender --</option>
+                                <option>Male</option>
+                                <option>Female</option>
+                                <option>Other</option>
+                            </select>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" data-dismiss="modal" 
+                                class="btn btn-danger">Cancel</button>
+                        <button type="button" class="btn btn-primary" onclick="addUser(event)">Add Member</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- The page loader --> 
+        <div id="pageLoader">
+            <div class="d-flex">
+                <div class="mx-auto" style="margin-top: 250px">
+                    <img src="/img/page_loading.gif" alt="Page Loader"/>
+                </div>
+            </div>
+        </div>
+    </body>
+
+    <script th:if="${user.isAdmin()}">
+        setTimeout(function () {
+            $("#pageLoader").fadeOut(function () {
+                $("#welcomeCard").fadeIn(function () {
+                    $("#turnoutCard").fadeIn(function () {
+                        $("#contributionsDetailCard").fadeIn(function () {
+                            $("#contributionsTable").fadeIn();
+                        });
+                    });
+                });
+            });
+        }, 300);
+
+    </script>
+    <script th:if="${!user.isAdmin()}">
+        setTimeout(function () {
+            $("#pageLoader").fadeOut(function () {
+                $("#welcomeCard").fadeIn(function () {
+                    $("#contributionsDetailCard").fadeIn(function () {
+                        $("#contributionsTable").fadeIn();
+                    });
+                });
+            });
+        }, 300);
+
+    </script>
+</html>

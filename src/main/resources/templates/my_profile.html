@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>Azra | My Profile</title>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+        <!-- Links -->
+        <link th:href="@{/css/bootstrap.css}" href="css/bootstrap.css" rel="stylesheet" />
+        <link th:href="@{/css/sweetalert.css}" href="css/sweetalert.css" rel="stylesheet" />
+        <link th:href="@{/css/font-awesome.min.css}" href="css/font-awesome.min.css" rel="stylesheet" />
+        <link th:href="@{/css/main.css}" href="css/main.css" rel="stylesheet" />
+
+        <!-- Scripts -->
+        <script src="js/jquery.js" th:src="@{/js/jquery.js}"></script>
+        <script src="js/bootstrap.min.js" th:src="@{/js/bootstrap.min.js}"></script>
+        <script src="js/sweetalert.js" th:src="@{/js/sweetalert.js}"></script>
+        <script src="js/main.js" th:src="@{/js/main.js}"></script>
+
+    </head>
+    <body>
+        <!-- Main Dashboard page --> 
+        <div id="dashboardPage">
+            <!-- The navigation bar -->
+            <div class="sidenav">
+                <a href="dashboard.html" th:href="@{/Azra/dashboard}">Home</a>
+                <a href="payments_cycle.html" th:href="@{/Azra/paymentsCycle}">Payments</a>
+                <a href="#" onclick="showContributeDialog('Sample')">Contribute</a>
+                <a href="members.html" th:href="@{/Azra/members}">Members</a>
+                <a href="#" style="color: white">My Profile</a>
+                <a href="#" th:href="@{/Azra/pdf/report}">Report</a>
+                <a href="index.html" th:href="@{/logOut}">Log Out</a>
+            </div>
+
+            <!-- Dashboard main content --> 
+            <div id="dashboardContent">
+
+                <!-- The welcome card --> 
+                <div style="display: none" class="customCard card mx-auto" id="welcomeCard">
+                    <div class="text-center bg-danger" th:if="${param.badUsername}" style="color: white">Failed. Check your old username and try again.</div>
+                    <div class="text-center bg-danger" th:if="${param.imageError}" style="color: white">Failed to update the image. Check and try again.</div>
+                    <div class="text-center bg-success" th:if="${param.updated}" style="color: white">The username has been updated successfully.</div>
+                    <div class="text-center bg-success" th:if="${param.success}" style="color: white">The password has been updated successfully.</div>
+                    <div class="text-center bg-success" th:if="${param.updatedImage}" style="color: white">The image has been updated successfully.</div>
+                    <div class="text-center bg-success" th:if="${param.phoneSuccess}" style="color: white">Phone Number and Name pdated Successfully</div>
+                    <div class="text-center bg-danger" th:if="${param.noMatch}" style="color: white">The passwords do not match!</div>
+                    <div class="text-center bg-danger" th:if="${param.invalidPassword}" style="color: white">Invalid Password supplied</div>
+                    <div class="card-body">
+                        <div class="float-left">
+                            <h4>Logged in as <span th:text="${user.getName()}" class="text-success">Kevin</span></h4>
+                            <table>
+                                <tr>
+                                    <td><h5>Role</h5></td>
+                                    <td><h5><span th:text="${user.getRole()}" class="text-info">Administrator</span></h5></td>
+                                </tr>
+                            </table>
+                            <div th:if="${currentCycle != null}">
+                                <span>Date of Payment</span>
+                                <span class="text-danger" th:text="${contExtras.getDateOfPayment()}">12/03/2015</span>
+                            </div>
+                        </div>
+                        <div class="float-right">
+                            <img id="profileImage" style="margin-left: 30px" class="profile-pic rounded-circle" th:src="${user.imagePath()}"
+                                 src="/img/avatar.png" alt="profile-pic" /> <br />
+                            <a href="#" onclick="updateProfilePicture()">Edit Profile Picture</a>
+                            <form id="updateProfilePicForm" method="POST" enctype="multipart/form-data" action="/updateImage">
+                                <input type="file" name="profilePic" id="profilePic" onchange="trackPhotoChanges(event)" style="display: none" />
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div  class="card-deck ml-2 mr-2" style="display: none" id="updateUsernameCard">
+                    <div th:if="${user.isUsernameUpdatable()}" class="mt-2 card">
+                        <div class="card-header">
+                            <div class="card-title text-center">Update your username <br />
+                                <span class="text-danger">(The username can only be updated once)</span></div>
+                        </div>
+                        <div class="card-body">
+                            <h5 style="display:none" id="updateUsernameMsg" class="text-danger text-center">All fields are required.</h5>
+                            <form action="/updateUsername" method="GET">
+                                <input id="oldUsernameUp" type="text" class="form-control mt-2" name="oldUsername" placeholder="Old Username" />
+                                <input id="newUsernameUp" type="text" class="form-control mt-2" name="newUsername" placeholder="New Username" />
+                                <button type="submit" id="updateUsernameBtn" style="display: none"></button>
+                            </form>
+                        </div>
+                        <div class="card-footer">
+                            <button type="button" class="btn btn-block btn-primary" onclick="updateUsername()">Update</button>
+                        </div>
+                    </div> 
+                    
+                    
+                    <div class="mt-2 card" style="display: none" id="updatePasswordCard">
+                        <div class="card-header">
+                            <div class="card-title text-center">Update your password</div>
+                        </div>
+                        <div class="card-body">
+                            <h5 id="passwordUpdateMsg" style="display: none" class="text-center text-danger">All fields are required!</h5>
+                            <form method="GET" action="/updatePassword" id="passwordForm">
+                                <input type="password" name="oldPassword" id="oldPasswordUp" class="form-control mt-2" placeholder="Old Password" />
+                                <input type="password" name="newPassword" id="newPasswordUp" class="form-control mt-2" placeholder="New Password" />
+                                <input type="password"  id="confirmPasswordUp" class="form-control mt-2" placeholder="Confirm New Password" />
+                                <button type="submit" id="updatePasswordBtn" hidden="hidden"></button>
+                            </form>
+                        </div>
+                        <div class="card-footer">
+                            <button type="button" class="btn btn-block btn-primary" onclick="updatePassword()">Update</button>
+                        </div>
+                    </div> 
+                    
+                    <div class="mt-2 card" style="display: none" id="updatePhoneNumberCard">
+                        <div class="card-header">
+                            <div class="card-title text-center"> Update other details</div>
+                        </div>
+                        <div class="card-body">
+                            <h5 id="phoneNumberMsg" style="display: none" class="text-center text-danger">All fields are required!</h5>
+                            <form method="GET" action="/updatePhoneNumber" id="phoneNumberForm">
+                                <input type="text" th:value="${user.getName()}" name="name"
+                                       id="nameUp" class="form-control mt-2" placeholder="Name" />
+                                <input type="text" th:value="${user.getPhoneNumber()}" name="phoneNumber"
+                                       id="phoneNumberUp" class="form-control mt-2" placeholder="Phone Number" />
+                            </form>
+                        </div>
+                        <div class="card-footer">
+                            <button type="button" class="btn btn-block btn-primary" onclick="updatePhoneNumber()">Update</button>
+                        </div>
+                    </div> 
+                </div>
+
+            </div>
+        </div>
+
+        <!-- The page loader --> 
+        <div id="pageLoader">
+            <div class="d-flex">
+                <div class="mx-auto" style="margin-top: 250px">
+                    <img src="/img/page_loading.gif" alt="Page Loader"/>
+                </div>
+            </div>
+        </div>
+    </body>
+
+    <script>
+        setTimeout(function () {
+            $("#pageLoader").fadeOut(function () {
+                $("#welcomeCard").fadeIn(function () {
+                    $("#updateUsernameCard").fadeIn(function () {
+                        $("#updatePasswordCard").fadeIn(function () {
+                            $("#updatePhoneNumberCard").fadeIn();
+                        });
+                    });
+                });
+            });
+        }, 300);
+
+    </script> 
+</html>

@@ -1,0 +1,9 @@
+com.azra
+com.azra.configuration
+com.azra.controllers
+com.azra.dto
+com.azra.entities
+com.azra.report
+com.azra.repositories
+com.azra.services
+com.azra.utils
