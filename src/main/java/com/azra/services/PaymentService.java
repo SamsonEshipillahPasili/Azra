@@ -24,7 +24,46 @@ public class PaymentService {
     private PaymentCycleRepository paymentCycleRepository;
 
 
-    public String createPaymentNewPaymentCycle(int amountPerUser){
+    public String createNewPaymentCycle(int amountPerUser, int interval){
+        // convert the number of days to hours.
+        int hours = interval * 24;
+
+        Calendar calendar = Calendar.getInstance();
+
+        // adds 24 hours to the current time and returns it.
+        Function<Void, Void> addDay = (nullValue) -> {
+            calendar.add(Calendar.HOUR_OF_DAY, hours);
+            return null;
+        };
+
+        // creates a new payment
+        Function<AzraUser, Payment> createPayment = azraUser -> {
+            Payment payment = new Payment(azraUser, calendar.getTime());
+            addDay.apply(null);
+            return payment;
+        };
+
+        // get a list of all the users
+        List<AzraUser> allUsers = this.userRepository.findAllUsers();
+        // create a new payment cycle
+        PaymentCycle paymentCycle = new PaymentCycle(amountPerUser);
+        // map all users to payments
+        List<Payment> paymentList = allUsers.stream()
+                .map(createPayment)
+                .collect(Collectors.toList());
+
+        // set the payment list of the payment cycle
+        paymentCycle.setPaymentsWrapper(new PaymentCycle.PaymentsWrapper(paymentList));
+
+        // save the payment to the database
+        this.paymentCycleRepository.save(paymentCycle);
+
+        // return acknowledgement
+        return "Ok";
+    }
+
+
+    /*public String createPaymentNewPaymentCycle(int amountPerUser){
         Calendar calendar = Calendar.getInstance();
 
         // adds 24 hours to the current time and returns it.
@@ -57,7 +96,7 @@ public class PaymentService {
 
         // return acknowledgement
         return "Ok";
-    }
+    }*/
 
     // close a payment cycle
     public String closePaymentCycle(){

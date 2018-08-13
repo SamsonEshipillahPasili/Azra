@@ -16,7 +16,7 @@ public class AzraRestController {
 
 
 
-    @PostMapping("/Azra/newCycle/{amount}")
+   /* @PostMapping("/Azra/newCycle/{amount}")
     public String createNewPaymentCycle(@PathVariable String amount){
         try{
             // delegate request to service class.
@@ -26,6 +26,20 @@ public class AzraRestController {
             return "Error";
         }
 
+    }*/
+
+    @PostMapping("/Azra/newCycle/{amount}/{days}")
+    public String createNewPaymentCycle(@PathVariable int amount, @PathVariable String days){
+        // parse the day, to remove the word "Day" or "Days"
+        days = days.toLowerCase().replace("s", "")
+                .replace("day", "").trim();
+        try{
+            // delegate the request to the "paymentService.createNewPaymentCycle()" method.
+            return paymentService.createNewPaymentCycle(amount, Integer.parseInt(days));
+        }catch(Exception e){
+            e.printStackTrace();
+            return "Error : " + e.getMessage();
+        }
     }
 
     @PostMapping("/Azra/contribute/{amount}")

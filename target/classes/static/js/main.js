@@ -218,8 +218,10 @@ function trackPhotoChanges(event){
     $("#updateProfilePicForm").submit();
 }
 
-// open a payment cycle
+/*// open a payment cycle
 function openPaymentCycle(){
+     // "/Azra/newCycle/{amount}/{days}"
+
      swal({
             title: "New Payment Cycle",
             text: "Specify the amount per person",
@@ -248,7 +250,38 @@ function openPaymentCycle(){
             }
 
         });
+}*/
+
+
+// open a payment cycle
+function openPaymentCycle(){
+     var amount = $("#amountPerPerson").val();
+     var interval = $("#interval").val();
+
+     if(amount && interval){
+        if(amount < 1){
+            $("#paymentCycleMsg").text("Invalid amount specified!").fadeIn();
+        }else if(interval === "-- Select Payment Interval --"){
+           $("#paymentCycleMsg").text("All fields are required!").fadeIn();
+        }else{
+           $("#paymentCycleMsg").fadeOut();
+           var url =  "/Azra/newCycle/" + amount + "/" + interval;
+           $.post(url, function(response){
+               if(response === "Ok"){
+                   swal("Great", "You have created a new payment cycle of Ksh." + amount, "success");
+                   setTimeout(function(){
+                                    window.location = "/Azra/paymentsCycle";
+                             }, 400);
+               }else{
+                    swal("Uh oh", response, "error");
+               }
+           });
+        }
+     }else{
+         $("#paymentCycleMsg").text("All fields are required!").fadeIn();
+     }
 }
+
 
 
 // close payment cycle
@@ -276,6 +309,5 @@ function closePaymentCycle(){
             });
         });
 }
-
 
 

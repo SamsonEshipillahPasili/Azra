@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.security.Principal;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+/* Controller class contains methods that handle user requests */
 
 @Controller
 public class AzraController {
@@ -35,15 +36,23 @@ public class AzraController {
     @Autowired
     private PaymentService paymentService;
 
+    // returns the index page.
     @GetMapping("/")
     public String index(Principal principal, Model model) {
         if (null != principal) {
-            // get the user making this request and put them in the model
+            // putting a value in the model makes it available for reference from the HTML page.
+
+            // get the user making this request a.k.a Principal and put them in the model
             AzraUser user = (AzraUser) azraUserDetailsService.loadUserByUsername(principal.getName());
+            // add the contribution extras instance to the model.
             model.addAttribute("contExtras", paymentService.getContributionExtras(principal.getName()));
+            // add the current user to the model.
             model.addAttribute("user", user);
+            // add contributions for the current day or today to the model
             model.addAttribute("contributions", this.paymentService.todaysContribution());
+            // add the current payment cycle to the model
             model.addAttribute("currentCycle", this.paymentCycleRepository.getCurrentPaymentCycle(true));
+            // return the "dashboard.html" template.
             return "dashboard";
         } else {
             return "index";

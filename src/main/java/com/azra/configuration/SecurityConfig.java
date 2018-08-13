@@ -11,6 +11,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter{
+    // password encryptor/decryptor.
     private BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
     @Autowired
     private AzraUserDetailsService userDetailsService;
@@ -19,28 +20,28 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
     @Override
     public void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
         authenticationManagerBuilder
-                .userDetailsService(userDetailsService)
-                .passwordEncoder(bCryptPasswordEncoder);
+                .userDetailsService(userDetailsService) // the userDetailsService loads a user entity given the username
+                .passwordEncoder(bCryptPasswordEncoder); // the password encoder encrypts/decrypts the password, to avoid any password info leaking
     }
 
     /* Configure Authorization of Azra resources */
     @Override
     public void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.authorizeRequests()
-                .antMatchers("/css/*", "/js/*", "img/*", "/")
+                .antMatchers("/css/*", "/js/*", "img/*", "/") // these URLS are visible to all the public
                 .permitAll()
                 .and()
                 .authorizeRequests()
-                .antMatchers("/Azra/*", "/addNewMember")
+                .antMatchers("/Azra/*", "/addNewMember") // only authenticated users can view these ones.
                 .authenticated()
                 .and()
                 .formLogin()
-                .loginPage("/")
+                .loginPage("/") // this is the URL for the log in page.
                 .and()
                 .logout()
-                .logoutUrl("/logOut")
+                .logoutUrl("/logOut") // this is the URL For logging out the user
                 .and()
                 .csrf()
-                .disable();
+                .disable(); // Disable Cross Site Request Forgery, for now.
     }
 }

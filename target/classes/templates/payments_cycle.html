@@ -134,9 +134,10 @@
                         <h3 class="modal-title">Open Payment Cycle</h3>
                     </div>
                     <div class="modal-body">
-                        <h5 class="text-danger text-center">Invalid Amount!</h5>
-                        <input type="number" class="form-control mt-2" id="amountID"  placeholder="Enter the amount"/>
-                        <select class="form-control mt-2" id="numOfDays">
+                        <h5 style="display: none" id="paymentCycleMsg" class="text-danger text-center">Invalid Amount!</h5>
+                        <input type="number" class="form-control mt-2" id="amountPerPerson"  placeholder="Enter the amount"/>
+                        <select class="form-control mt-2" id="interval">
+                            <option>-- Select Payment Interval --</option>
                             <option>1 Day</option>
                             <option>2 Days</option>
                             <option>3 Days</option>
@@ -148,7 +149,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" data-dismiss="modal" class="btn btn-outline-danger">Cancel</button>
-                        <button type="button" data-dismiss="modal" class="btn btn-outline-success">Open Cycle</button>
+                        <button type="button" onclick="openPaymentCycle()" class="btn btn-outline-success">Open Cycle</button>
                     </div>
                 </div>
             </div>
