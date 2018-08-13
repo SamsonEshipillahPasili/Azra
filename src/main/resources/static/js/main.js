@@ -90,6 +90,8 @@ function addUser(event){
             $("#addMemberMsg").text("Select the gender, please").fadeIn();
         }else if(phoneNumber.length < 9){
             $("#addMemberMsg").text("Phone number must be at least 9 characters!").fadeIn();
+        }else if(phoneNumber < 0){
+            $("#addMemberMsg").text("Phone number cannot be negative!").fadeIn();
         }else{
 
             // submit the values to  REST endpoint to add the values
@@ -202,13 +204,19 @@ function updatePassword(){
 
 // update the username
 function updatePhoneNumber(){
+
+    // clear any other pre-existing error message.
     var phoneNumber = $("#phoneNumberUp").val();
     var name = $("#nameUp").val();
     if(phoneNumber && name){
-        //$("#phoneNumberForm").submit();
-        $("#updateOtherBtn").click();
+        if(phoneNumber < 0){
+            $("#phoneNumberMsg").text("Phone number cannot be negative").fadeIn()
+        }else{
+            //$("#phoneNumberForm").submit();
+            $("#updateOtherBtn").click();
+        }
     }else{
-        $("#phoneNumberMsg").fadeIn();
+        $("#phoneNumberMsg").text("All fields are required.").fadeIn();
     }
 }
 
