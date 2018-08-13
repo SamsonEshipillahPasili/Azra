@@ -24,7 +24,7 @@ public class PaymentService {
     private PaymentCycleRepository paymentCycleRepository;
 
 
-    public String createNewPaymentCycle(int amountPerUser, int interval){
+    public String createNewPaymentCycle(int amountPerUser, int interval) {
         // convert the number of days to hours.
         int hours = interval * 24;
 
@@ -62,46 +62,10 @@ public class PaymentService {
         return "Ok";
     }
 
-
-    /*public String createPaymentNewPaymentCycle(int amountPerUser){
-        Calendar calendar = Calendar.getInstance();
-
-        // adds 24 hours to the current time and returns it.
-        Function<Void, Void> addDay = (nullValue) -> {
-            calendar.add(Calendar.HOUR_OF_DAY, 24);
-            return null;
-        };
-
-        // creates a new payment
-        Function<AzraUser, Payment> createPayment = azraUser -> {
-            Payment payment = new Payment(azraUser, calendar.getTime());
-            addDay.apply(null);
-            return payment;
-        };
-
-        // get a list of all the users
-        List<AzraUser> allUsers = this.userRepository.findAllUsers();
-        // create a new payment cycle
-        PaymentCycle paymentCycle = new PaymentCycle(amountPerUser);
-        // map all users to payments
-        List<Payment> paymentList = allUsers.stream()
-                .map(createPayment)
-                .collect(Collectors.toList());
-
-        // set the payment list of the payment cycle
-        paymentCycle.setPaymentsWrapper(new PaymentCycle.PaymentsWrapper(paymentList));
-
-        // save the payment to the database
-        this.paymentCycleRepository.save(paymentCycle);
-
-        // return acknowledgement
-        return "Ok";
-    }*/
-
     // close a payment cycle
-    public String closePaymentCycle(){
+    public String closePaymentCycle() {
         PaymentCycle currentPaymentCycle = this.paymentCycleRepository.getCurrentPaymentCycle(true);
-        if(null != currentPaymentCycle){
+        if (null != currentPaymentCycle) {
             currentPaymentCycle.setOpen(false);
             this.paymentCycleRepository.save(currentPaymentCycle);
             return "Ok";
@@ -111,64 +75,60 @@ public class PaymentService {
     }
 
     // contribute an amount to the system
-    public String contributeAmount(int amount, String azraUsername){
-        try{
+    public String contributeAmount(int amount, String azraUsername) {
+        try {
             // get the AzraUser first
             AzraUser contributor = this.userRepository.findById(azraUsername).get();
-            if(contributor.getUsername().equals(this.todaysRecipient().getUsername())){
-                return "You cannot contribute to yourself!";
-            }else{
-                // the amount given must tally with the amount per person prevously specified in the cycle.
-                if(this.paymentCycleRepository.getCurrentPaymentCycle(true).getAmountPerPerson() != amount){
-                    return "The amount must be Ksh." + paymentCycleRepository.getCurrentPaymentCycle(true).getAmountPerPerson();
-                }else{
-                    // did this user make a previous contribution?
-                    Optional<UserContribution> ucOptional = this.getTodaysPayment().getUserContributions().stream()
-                            .filter(uc -> uc.getUsername().equals(contributor.getUsername()))
-                            .findFirst();
-                    // the user made a previous payment
-                    if(ucOptional.isPresent()){
-                        return "You have already made a contribution!";
-                    }else{
-                        PaymentCycle currentPaymentCycle = this.paymentCycleRepository.getCurrentPaymentCycle(true);
-                        List<Payment> payments = currentPaymentCycle.getPaymentList();
-                        payments.stream()
-                                .filter(payment -> payment.getParsedDate()
-                                        .equals(new SimpleDateFormat("dd/MM/yyyy").format(new Date())))
-                                        .findFirst()
-                                        .get()
-                                        .getUserContributions()
-                                        .add(new UserContribution(contributor));
-                        // save the mutated cycle back to the repository
-                        currentPaymentCycle.getPaymentsWrapper().setPaymentList(payments);
-                        this.paymentCycleRepository.save(currentPaymentCycle);
-                        return "Ok";
-                    }
+            // the amount given must tally with the amount per person prevously specified in the cycle.
+            if (this.paymentCycleRepository.getCurrentPaymentCycle(true).getAmountPerPerson() != amount) {
+                return "The amount must be Ksh." + paymentCycleRepository.getCurrentPaymentCycle(true).getAmountPerPerson();
+            } else {
+                // did this user make a previous contribution?
+                Optional<UserContribution> ucOptional = this.getTodaysPayment().getUserContributions().stream()
+                        .filter(uc -> uc.getUsername().equals(contributor.getUsername()))
+                        .findFirst();
+                // the user made a previous payment
+                if (ucOptional.isPresent()) {
+                    return "You have already made a contribution!";
+                } else {
+                    PaymentCycle currentPaymentCycle = this.paymentCycleRepository.getCurrentPaymentCycle(true);
+                    List<Payment> payments = currentPaymentCycle.getPaymentList();
+                    payments.stream()
+                            .filter(payment -> payment.getParsedDate()
+                                    .equals(new SimpleDateFormat("dd/MM/yyyy").format(new Date())))
+                            .findFirst()
+                            .get()
+                            .getUserContributions()
+                            .add(new UserContribution(contributor));
+                    // save the mutated cycle back to the repository
+                    currentPaymentCycle.getPaymentsWrapper().setPaymentList(payments);
+                    this.paymentCycleRepository.save(currentPaymentCycle);
+                    return "Ok";
                 }
             }
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return "Internal Error";
         }
     }
 
     // get the today's recipient
-    public AzraUser todaysRecipient(){
-        if(getTodaysPayment() == null){
+    public AzraUser todaysRecipient() {
+        if (getTodaysPayment() == null) {
             return null;
         }
         return getTodaysPayment().getRecipient();
     }
 
     // get today's contributions
-    public List<UserContribution> todaysContribution(){
+    public List<UserContribution> todaysContribution() {
         if (this.getTodaysPayment() == null)
             return new ArrayList<>();
         return this.getTodaysPayment().getUserContributions();
     }
 
     // get today's payment
-    public Payment getTodaysPayment(){
+    public Payment getTodaysPayment() {
         PaymentCycle currentPaymentCycle = this.paymentCycleRepository.getCurrentPaymentCycle(true);
         if (currentPaymentCycle == null) return null;
         // get today's date string
@@ -179,12 +139,12 @@ public class PaymentService {
     }
 
     // get contribution extras
-    public ContributionExtras getContributionExtras(String username){
+    public ContributionExtras getContributionExtras(String username) {
         ContributionExtras contributionExtras = new ContributionExtras();
 
-        if(null != this.paymentCycleRepository.getCurrentPaymentCycle(true)){
+        if (null != this.paymentCycleRepository.getCurrentPaymentCycle(true)) {
 
-            if(this.todaysRecipient() == null) return contributionExtras;
+            if (this.todaysRecipient() == null) return contributionExtras;
             String todaysRecipient = this.todaysRecipient().getName();
             int contributionTurnout = this.getTodaysPayment() == null ? 0 : this.getTodaysPayment().getUserContributions().size();
             int noOfContributors = this.paymentCycleRepository.getCurrentPaymentCycle(true).getPaymentList().size();
@@ -196,7 +156,7 @@ public class PaymentService {
                     .filter(payment -> payment.getRecipient().getUsername().equals(username))
                     .findFirst();
 
-            if(paymentOptional.isPresent()){
+            if (paymentOptional.isPresent()) {
                 date = paymentOptional.get().getParsedDate();
             }
 
@@ -210,7 +170,6 @@ public class PaymentService {
         return contributionExtras;
 
     }
-
 
 
 }
