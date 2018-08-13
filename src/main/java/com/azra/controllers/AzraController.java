@@ -16,6 +16,8 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.security.Principal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 /* Controller class contains methods that handle user requests */
@@ -87,7 +89,7 @@ public class AzraController {
         // get all the members and add them to the model
         model.addAttribute("user", user);
         model.addAttribute("contExtras", paymentService.getContributionExtras(principal.getName()));
-        model.addAttribute("members", this.userRepository.findAll());
+        model.addAttribute("rows", this.group(this.userRepository.findAll()));
         model.addAttribute("currentCycle", this.paymentCycleRepository.getCurrentPaymentCycle(true));
         return "members";
     }
@@ -241,5 +243,29 @@ public class AzraController {
         model.addAttribute("contributions", this.paymentService.todaysContribution());
 
         return "report";
+    }
+
+
+    // group the AzraUsers into groups of four
+    public List<List<AzraUser>> group(Iterable<AzraUser> AzraUsers) {
+        List<List<AzraUser>> AzraUserList = new ArrayList<>();
+        List<AzraUser> currentAzraUserList = new ArrayList<>();
+
+        for (AzraUser AzraUser : AzraUsers) {
+            if (currentAzraUserList.size() >= 4) {
+                ArrayList<AzraUser> temp = new ArrayList<>();
+                temp.addAll(currentAzraUserList);
+                currentAzraUserList.clear();
+                AzraUserList.add(temp);
+                currentAzraUserList.add(AzraUser);
+            } else {
+                currentAzraUserList.add(AzraUser);
+            }
+        }
+        // collect any remaining AzraUsers in the currentAzraUserList and add them to AzraUserList
+        AzraUserList.add(currentAzraUserList);
+
+        return AzraUserList;
+
     }
 }

@@ -77,56 +77,59 @@
                     </div>
                 </div>
 
-                <!-- List of members --> 
                 <div  style="margin-left: 2.6%; display: none" class="customCard" id="contributionsTable">
-                    <table class="table table-light table-hover table-striped table-bordered">
-                        <tr>
-                            <th class="text-info text-center">Sr. No.</th>
-                            <th class="text-info text-center">Name</th>
-                            <th class="text-info text-center">Phone Number</th>
-                            <th class="text-info text-center">Gender</th>
-                            <th class="text-info text-center">Date Joined</th>
-                            <th class="text-info text-center" th:if="${user.isAdmin()}">Block Account</th>
-                            <th class="text-info text-center" th:if="${user.isAdmin()}">Delete Member</th>
-                        </tr>
-                        <th:block th:each="member, count : ${members}">
-                            <tr>
-                                <td class="text-center" th:text="${count.getCount()}">1</td>
-                                <td class="text-center" th:text="${member.getName()}">Makelia</td>
-                                <td class="text-center" th:text="${member.getPhoneNumber()}">072986412</td>
-                                <td class="text-center" th:text="${member.getGender()}">Male</td>
-                                <td class="text-center" th:text="${member.getDateJoined()}">12/03/15</td>
-
-                                <td th:if="${member.isEnabled() && user.isAdmin()}" >
-                                    <form action="/blockUser" method="GET">
-                                        <input hidden="hidden" type="text" th:value="${member.getUsername()}" name="username"/>
-                                        <button th:id="${member.getUsername()}" hidden="hidden" type="submit"></button>
-                                        <button type="button" th:data-username="${member.getUsername()}" onclick="blockUser(event)"
-                                                class="btn btn-outline-danger btn-block">Block</button>
-                                    </form>
-                                </td>
-                                <td th:if="${!(member.isEnabled()) && user.isAdmin()}">
-                                    <form action="/unBlockUser" method="GET">
-                                        <input hidden="hidden" type="text" th:value="${member.getUsername()}" name="username"/>
-                                        <button th:id="${member.getUsername()}" hidden="hidden" type="submit"></button>
-                                        <button type="button" th:data-username="${member.getUsername()}" onclick="unBlockUser(event)"
-                                                class="btn btn-outline-success btn-block">Unblock</button>
-                                    </form>
-                                </td>
-                                <td th:if="${user.isAdmin()}">
-                                    <form action="/deleteUser" method="GET">
-                                        <input hidden="hidden" type="text" th:value="${member.getUsername()}" name="username"/>
-                                        <button th:id="${member.getUsername().concat(2)}" hidden="hidden" type="submit"></button>
-                                        <button type="button" th:data-username="${member.getUsername().concat(2)}" onclick="deleteUser(event)"
-                                                class="btn btn-outline-danger btn-block">Delete</button>
-                                    </form>
-                                </td>
-                            </tr>
-                        </th:block>
-                    </table>
+                    <th:block th:each="row : ${rows}">
+                        <div class="row mt-2 mb-2">
+                            <th:block th:each="azraUser : ${row}">
+                                <div class="col-3">
+                                    <div class="card">
+                                        <img src="img/sample_image.jpg" th:src="${azraUser.imagePath()}" alt="product" style=" max-height: 200px;" />
+                                        <div class="card-body">
+                                            <h4 class="card-title text-center" th:text="${azraUser.getName()}">Polo Skirt</h4>
+                                            <ul>
+                                                <li>Phone: <span th:text="${azraUser.getPhoneNumber()}"></span></li>
+                                                <li>Gender: <span th:text="${azraUser.getGender()}"></span></li>
+                                                <li>Date Joined: <span th:text="${azraUser.getFormatedDateJoined()}"></span></li>
+                                            </ul>
+                                        </div>
+                                        <div th:if="${user.isAdmin()}" class="card-footer">
+                                            <div class="row">
+                                                <div class="col-6">
+                                                    <div th:if="${azraUser.isEnabled() && user.isAdmin()}" >
+                                                        <form action="/blockUser" method="GET">
+                                                            <input hidden="hidden" type="text" th:value="${azraUser.getUsername()}" name="username"/>
+                                                            <button th:id="${azraUser.getUsername()}" hidden="hidden" type="submit"></button>
+                                                            <button type="button" th:data-username="${azraUser.getUsername()}" onclick="blockUser(event)"
+                                                                    class="btn btn-outline-danger btn-block">Block</button>
+                                                        </form>
+                                                    </div>
+                                                    <div th:if="${!(azraUser.isEnabled()) && user.isAdmin()}">
+                                                        <form action="/unBlockUser" method="GET">
+                                                            <input hidden="hidden" type="text" th:value="${azraUser.getUsername()}" name="username"/>
+                                                            <button th:id="${azraUser.getUsername()}" hidden="hidden" type="submit"></button>
+                                                            <button type="button" th:data-username="${azraUser.getUsername()}" onclick="unBlockUser(event)"
+                                                                    class="btn btn-outline-success btn-block">Unblock</button>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                                <div class="col-6">
+                                                    <div th:if="${user.isAdmin()}">
+                                                        <form action="/deleteUser" method="GET">
+                                                            <input hidden="hidden" type="text" th:value="${azraUser.getUsername()}" name="username"/>
+                                                            <button th:id="${azraUser.getUsername().concat(2)}" hidden="hidden" type="submit"></button>
+                                                            <button type="button" th:data-username="${azraUser.getUsername().concat(2)}" onclick="deleteUser(event)"
+                                                                    class="btn btn-outline-danger btn-block">Delete</button>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </th:block>
+                        </div>
+                    </th:block>
                 </div>
-            </div>
-
         </div>
 
         <!-- Modal to add a member --> 

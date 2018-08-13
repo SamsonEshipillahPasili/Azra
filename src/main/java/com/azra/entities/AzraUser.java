@@ -7,6 +7,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
 
@@ -51,6 +53,12 @@ public class AzraUser implements Serializable, UserDetails{
         }else{
             return AuthorityUtils.createAuthorityList("UNKNOWN");
         }
+    }
+
+
+    public String getFormatedDateJoined(){
+        DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+        return dateFormat.format(this.dateJoined);
     }
 
     public String imagePath(){
