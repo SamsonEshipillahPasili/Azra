@@ -95,15 +95,16 @@
                                         <div th:if="${user.isAdmin()}" class="card-footer">
                                             <div class="row">
                                                 <div class="col-6">
-                                                    <div th:if="${azraUser.isEnabled() && user.isAdmin()}" >
+                                                    <button th:if="${azraUser.isAdmin()}" class="btn btn-outline-danger disabled">Block</button>
+                                                    <div th:if="${azraUser.isEnabled() && user.isAdmin() && !(azraUser.isAdmin())}" >
                                                         <form action="/blockUser" method="GET">
                                                             <input hidden="hidden" type="text" th:value="${azraUser.getUsername()}" name="username"/>
                                                             <button th:id="${azraUser.getUsername()}" hidden="hidden" type="submit"></button>
                                                             <button type="button" th:data-username="${azraUser.getUsername()}" onclick="blockUser(event)"
-                                                                    class="btn btn-outline-danger btn-block">Block</button>
+                                                                    class="btn btn-outline-danger btn-block" >Block</button>
                                                         </form>
                                                     </div>
-                                                    <div th:if="${!(azraUser.isEnabled()) && user.isAdmin()}">
+                                                    <div th:if="${!(azraUser.isEnabled()) && user.isAdmin() && !(azraUser.isAdmin())}">
                                                         <form action="/unBlockUser" method="GET">
                                                             <input hidden="hidden" type="text" th:value="${azraUser.getUsername()}" name="username"/>
                                                             <button th:id="${azraUser.getUsername()}" hidden="hidden" type="submit"></button>
@@ -113,7 +114,8 @@
                                                     </div>
                                                 </div>
                                                 <div class="col-6">
-                                                    <div th:if="${user.isAdmin()}">
+                                                    <button th:if="${azraUser.isAdmin()}" class="btn btn-outline-danger disabled">Delete</button>
+                                                    <div th:if="${user.isAdmin() && !azraUser.isAdmin()}">
                                                         <form action="/deleteUser" method="GET">
                                                             <input hidden="hidden" type="text" th:value="${azraUser.getUsername()}" name="username"/>
                                                             <button th:id="${azraUser.getUsername().concat('_')}" hidden="hidden" type="submit"></button>
