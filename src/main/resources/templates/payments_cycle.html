@@ -91,7 +91,7 @@
                                 data-toggle="modal" data-target="#openPaymentCycleModal">Open Cycle</button>
 
 
-                        <button th:if="${currentCycle != null}" type="button" id="closePaymentBtn" class="btn btn-outline-danger float-right"
+                        <button th:if="${currentCycle != null && user.isAdmin()}" type="button" id="closePaymentBtn" class="btn btn-outline-danger float-right"
                                 onclick="closePaymentCycle()">Close Cycle</button>
                     </div>
                 </div>
