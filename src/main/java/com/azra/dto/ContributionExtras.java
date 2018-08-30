@@ -12,4 +12,12 @@ public class ContributionExtras {
     private int totalPossibleContributions;
     private int noOfContributors;
     private String todaysRecipient = "Not Selected.";
+
+    public int getTotalContributions(){
+        return (int) Math.round(this.totalContributions * 0.16);
+    }
+
+    public int getTotalPossibleContributions(){
+        return (int) Math.round(this.totalPossibleContributions * 0.16);
+    }
 }

@@ -40,6 +40,11 @@ public class PaymentCycle implements Serializable {
     }
 
 
+   /* public int getAmountPerPerson(){
+        return (int) (this.amountPerPerson * 0.16);
+    }*/
+
+
     // helper method to quickly get the list of payments
     public List<Payment> getPaymentList(){
         return this.getPaymentsWrapper().getPaymentList();
