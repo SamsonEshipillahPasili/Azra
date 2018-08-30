@@ -55,7 +55,7 @@
                     <tr>
                         <td class="text-center" th:text="${count.getCount()}">1</td>
                         <td class="text-center" th:text="${contribution.getName()}">Makelia</td>
-                        <td class="text-center">Ksh <span th:text="${currentCycle.getAmountPerPerson()}">2000</span></td>
+                        <td class="text-center">Ksh <span th:text="${currentCycle.getAmountPerPerson() * 0.16}">2000</span></td>
                         <td class="text-center" th:text="${contribution.getTime()}">14:03:10</td>
                     </tr>
                 </th:block>
